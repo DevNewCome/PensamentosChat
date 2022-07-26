@@ -23,6 +23,14 @@ module.exports = class AuthController{
       res.render('auth/login')
       return
     }
+    //Initialize session
+    req.session.userid = user.id
+
+    req.flash('message', 'Autenticação realizada com sucesso')
+
+    req.session.save(()=>{
+      res.redirect('/')
+    })   
   }
 
 
