@@ -47,7 +47,7 @@ module.exports = class AuthController{
 
     try{
       await User.create(user)
-      req.flash('message', 'Cadastro realizado com sucesso!')
+      req.flash('message', 'Cadastro realizado com sucesso')
       res.redirect('/')
     } catch (err) {
       console.log(err)
