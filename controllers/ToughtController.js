@@ -6,7 +6,23 @@ module.exports = class ToughtController{
     res.render('toughts/home')
   }
   static async dashboard(req,res) {
-    res.render('toughts/dashboard')
+    const userId = req.session.userid
+    const user = await User.findOne({
+      where: {
+        id: userId,
+      },   
+      include: Tought,
+      plain: true,
+    })
+
+    //check if user exist
+    if(!user) {
+      res.redirect('/login')
+    }
+
+    const toughts = user.Toughts.map((result)=> result.dataValues) // pegando só o pensamento do user
+
+    res.render('toughts/dashboard', { toughts })
   }
 
   static createTought(req, res) {
@@ -28,7 +44,20 @@ module.exports = class ToughtController{
       }catch (error){
           console.log(error)
       }
-    
-     
+       
+  }
+
+
+  static removeTought(req, res) {
+    const id = req.body.id
+
+    Tought.destroy({ where: { id: id } })
+      .then(() => {
+        req.flash('message', 'Pensamento removido com sucesso!')
+        req.session.save(() => {
+          res.redirect('/toughts/dashboard')
+        })
+      })
+      .catch((err) => console.log())
   }
 }
